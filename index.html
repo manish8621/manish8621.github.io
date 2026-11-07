@@ -1,424 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
-    <style>
-        *
-        {
-            font-family: 'Arial';
-            font-weight: 700;
-        }
-        body{
-            display:flex;
-            flex-direction: column;
-            align-items: center;
-            background :#e0e0e0;
-            background-size: cover;
-            background-position: center;
-        }
-        h1
-        {
-            color: grey;
-            font-family: "Arial";
-        }
-        .container
-        {
-            height: 300px;
-            width: 600px;
-            margin-top: 100px;
-            border: 2px solid black;
-            display: flex;
-            backdrop-filter:blur(5px);
-        }
-        #game-box-container
-        {
-            height: 300px;
-            width: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid red;
-        }
-        #game-box
-        {
-            display: grid;
-            grid-template-columns: 42px 42px 42px;
-            
-            gap: 5px;
-            align-items: center;
-            justify-content: center;
-        }
-        .cell
-        {
-            height: 40px;
-            width:40px;
-            color: black;
-            background-color: transparent;
-            /* background-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0px 0px 5px rgb(255, 255, 255); */
-            backdrop-filter: blur(10px);
-            border-radius: 5px;
-            border: 1px solid rgba(0,0,0,0.3);
-        }
-        #opt-div
-        {
-            height: 300px;
-            width: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1px solid blue;
-        }
-        .options-title
-        {
-            color: rgba(0, 38, 255, 0.61);
-        }
-        .option
-        {
-            display: flex;
-            justify-content: space-between;
-            margin: 2px 0;
-            width: 90%;
-        }
-        .option input
-        {
-            margin-left: 50px;
-            width: 40px;
-        }
-        #ok-btn
-        {
-            padding: 5px 15px;
-            background-color: rgba(0, 0, 255, 0.5);
-            box-shadow: 0px 0px 5px black;
-            border-radius: 15px;
-            color: white;
-            margin-bottom: 20px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mk — Android × IoT Engineer</title>
+<meta name="description" content="Mk — Android developer building companion apps for connected hardware. BLE, ESP32, Raspberry Pi, on-device AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0f0e; --panel:#121716; --line:#1f2826; --text:#e6ece9; --muted:#8a9792;
+    --accent:#3ddc97; --accent2:#f5b942; --live:#3ddc97; --wip:#f5b942; --plan:#7aa2ff;
+    --mono:'JetBrains Mono',ui-monospace,monospace; --sans:'Space Grotesk',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;
+    background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:28px 28px}
+  a{color:inherit}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
 
-        }
-        .player-turn
-        {
-            color:rgb(100, 0, 146);
-            margin: 10px 0;
-        }
-        #player1-indicator,#player2-indicator
-        {
-            height: 10px;
-            width: 10px;
-            border-radius: 10px;
-            margin-left: 10px;
-            background-color: rgb(0, 255, 136);
-            box-shadow: 0px 0px 5px rgb(0, 255, 136);
-            display: inline-block;
-            transition: opacity 1000ms;
-        }
-        
-    </style>
+  /* nav */
+  nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);background:rgba(12,15,14,.75);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;justify-content:space-between;align-items:center;height:60px}
+  .logo{font-family:var(--mono);font-weight:600;text-decoration:none}
+  .logo span{color:var(--accent)}
+  nav ul{display:flex;gap:24px;list-style:none;font-family:var(--mono);font-size:13px}
+  nav ul a{text-decoration:none;color:var(--muted)} nav ul a:hover{color:var(--accent)}
+
+  /* hero */
+  header{padding:110px 0 80px}
+  .tag{font-family:var(--mono);font-size:13px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
+  .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:p 2s infinite}
+  @keyframes p{70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+  h1{font-size:clamp(40px,7vw,76px);line-height:1.05;margin:18px 0 22px;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:var(--accent)}
+  .lede{max-width:620px;color:var(--muted);font-size:19px}
+  .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .btn{font-family:var(--mono);font-size:14px;padding:12px 20px;border:1px solid var(--line);border-radius:8px;text-decoration:none;transition:.2s}
+  .btn.primary{background:var(--accent);color:#06130d;border-color:var(--accent);font-weight:600}
+  .btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+
+  .stack-line{margin-top:60px;display:flex;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:12px}
+  .stack-line span{padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:var(--panel)}
+
+  /* sections */
+  section{padding:80px 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:36px}
+  .sec-head .n{font-family:var(--mono);color:var(--accent);font-size:14px}
+  h2{font-size:32px;letter-spacing:-.01em}
+
+  /* about */
+  .about{display:grid;grid-template-columns:1.4fr 1fr;gap:40px}
+  .about p{color:var(--muted);margin-bottom:16px;font-size:17px}
+  .about p strong{color:var(--text);font-weight:500}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:start}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .stat b{font-family:var(--mono);font-size:30px;color:var(--accent);display:block}
+  .stat small{color:var(--muted);font-size:13px}
+
+  /* projects */
+  .filters{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+  .filters button{font-family:var(--mono);font-size:12px;background:var(--panel);color:var(--muted);border:1px solid var(--line);padding:7px 14px;border-radius:999px;cursor:pointer}
+  .filters button.on{color:#06130d;background:var(--accent);border-color:var(--accent)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;transition:.25s;position:relative;overflow:hidden}
+  .card:hover{border-color:var(--accent);transform:translateY(-4px)}
+  .card.flag{grid-column:1/-1;background:linear-gradient(135deg,#13201b,var(--panel))}
+  .card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .status{font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid}
+  .status.live{color:var(--live);border-color:var(--live)}
+  .status.wip{color:var(--wip);border-color:var(--wip)}
+  .status.plan{color:var(--plan);border-color:var(--plan)}
+  .kind{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .card h3{font-size:21px;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:15px;flex:1}
+  .card ul{margin:14px 0 0 18px;color:var(--muted);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+  .chips span{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;background:#0c1311;color:var(--accent)}
+  .card .links{margin-top:18px;font-family:var(--mono);font-size:13px;display:flex;gap:16px}
+  .card .links a{color:var(--text);text-decoration:none;border-bottom:1px dashed var(--muted)}
+  .card .links a:hover{color:var(--accent);border-color:var(--accent)}
+
+  /* skills */
+  .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+  .skill{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .skill h4{font-family:var(--mono);font-size:13px;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em}
+  .skill li{list-style:none;padding:5px 0;border-bottom:1px dashed var(--line);font-size:15px}
+  .skill li:last-child{border:none}
+
+  /* now */
+  .now{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;font-family:var(--mono);font-size:14px}
+  .now div{padding:8px 0;color:var(--muted)} .now div b{color:var(--accent2);font-weight:600;margin-right:10px}
+
+  /* contact */
+  .contact{text-align:center;padding:100px 0}
+  .contact h2{font-size:clamp(30px,5vw,48px);margin-bottom:14px}
+  .contact p{color:var(--muted);margin-bottom:30px}
+  .contact .cta{justify-content:center}
+  footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:.6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:760px){
+    nav ul{display:none}
+    .about{grid-template-columns:1fr}
+    header{padding:70px 0 50px}
+  }
+</style>
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
-    <div class="container">
-        <div id="game-box-container">
-            <div id="game-box">
-            </div>
-        </div>
-        <div id="opt-div">
-            <p class="options-title">Options</p>
-            <div class="option">
-                <label>row</label>
-                <input type="number" class="option" id="max-row" name="row">
-            </div>
-            <div class="option">
-                <label>col</label>
-                <input type="number" class="option" id="max-col" name="col">
-            </div>
-            <div class="option">
-                <label>score</label>
-                <input type="number" class="option" id="max-score" name="score">
-            </div>
-            <button onclick="onclick_size_change()" id="ok-btn">ok</button>
-            <div class="player-turn">
-                <label>Player 1</label>
-                <div id="player1-indicator"></div>
-            </div>
-            <div class="player-turn">
-                <label>Player 2</label>
-                <div id="player2-indicator"></div>
-            </div>
-        </div>
+
+<nav>
+  <div class="wrap">
+    <a href="#" class="logo">mk<span>@</span>iot:~$</a>
+    <ul>
+      <li><a href="#about">about</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="tag"><span class="pulse"></span> open to IoT companion app / embedded Android roles</div>
+    <h1>I build the app<br>side of <em>hardware</em>.</h1>
+    <p class="lede">Android developer with 3.5+ years shipping product apps, now going deep on the stack underneath — BLE, ESP32, FreeRTOS, Raspberry Pi and on-device AI. I like it when a phone, a board and a sensor all agree on what's happening.</p>
+    <div class="cta">
+      <a class="btn primary" href="#projects">See the builds →</a>
+      <a class="btn" href="https://github.com/YOUR_USERNAME" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="resume.pdf" target="_blank">Résumé</a>
     </div>
-    <a href="soduku.html">Try Soduku game here !</a>
-</body>
+    <div class="stack-line">
+      <span>Kotlin</span><span>Jetpack Compose</span><span>Android BLE</span><span>ESP32 / ESP-IDF</span>
+      <span>FreeRTOS</span><span>MQTT</span><span>Raspberry Pi</span><span>Python</span><span>Local LLMs</span>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">01</span><h2>About</h2></div>
+    <div class="about reveal">
+      <div>
+        <p>I'm <strong>Mk</strong>, an Android engineer based in Chennai. My day job has been <strong>product Android</strong> — networking, local databases, clean UI — and for the last several months I've been doing <strong>AI-driven development</strong>, building chat UIs and tool-calling loops.</p>
+        <p>Outside work I'm a <strong>maker</strong>. My bedroom runs on a Raspberry Pi alarm I wrote, my audio setup is half DIY, and there's usually an ESP32 on my desk. I'm steering toward <strong>companion apps for connected devices</strong> — wearables, medical devices, smart home, industrial IoT and fitness tech — where the app is only as good as its understanding of the hardware.</p>
+        <p>I learn by building the real thing, then going one layer lower than I need to.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>3.5+</b><small>years professional Android</small></div>
+        <div class="stat"><b>6</b><small>hardware builds on the bench</small></div>
+        <div class="stat"><b>BLE</b><small>current deep-dive</small></div>
+        <div class="stat"><b>1</b><small>Pi that wakes me up daily</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">02</span><h2>Builds</h2></div>
+    <div class="filters">
+      <button class="on" data-f="all">all</button>
+      <button data-f="embedded">embedded</button>
+      <button data-f="pi">raspberry pi</button>
+      <button data-f="ai">ai</button>
+      <button data-f="audio">audio</button>
+    </div>
+
+    <div class="grid">
+
+      <article class="card flag reveal" data-k="embedded">
+        <div class="top"><span class="kind">// flagship</span><span class="status plan">● in design</span></div>
+        <h3>Bike Tamper Detection System</h3>
+        <p>A low-power theft alarm for a motorcycle. An accelerometer wakes the ESP32 from deep sleep on movement, it decides whether it's a real tamper, and pushes an alert over MQTT to my home server — with a BLE link to an Android companion app for arming, status and config.</p>
+        <ul>
+          <li>Interrupt-driven wake: MPU6050 motion IRQ → ESP32 deep-sleep exit</li>
+          <li>Structured FreeRTOS tasks for sensing, connectivity and alerting</li>
+          <li>Robust BLE: reconnection, bonding, and state sync with the app</li>
+          <li>Single 18650 cell with TP4056 charging, designed around battery life</li>
+        </ul>
+        <div class="chips"><span>ESP32</span><span>ESP-IDF</span><span>FreeRTOS</span><span>BLE</span><span>MQTT</span><span>MPU6050</span><span>Kotlin</span></div>
+        <div class="links"><a href="https://github.com/YOUR_USERNAME/bike-tamper" target="_blank" rel="noopener">repo ↗</a></div>
+      </article>
+
+      <article class="card reveal" data-k="pi">
+        <div class="top"><span class="kind">// home automation</span><span class="status live">● live</span></div>
+        <h3>Light + Voice Wake-up System</h3>
+        <p>My actual alarm. A Pi 5 ramps a hidden warm-white room light and a WLED strip up like a sunrise, plays a short chime, then reads my tasks aloud with TTS. At night it dims everything and announces bedtime 15 minutes ahead.</p>
+        <div class="chips"><span>Pi 5</span><span>Python</span><span>WLED</span><span>TTS</span><span>scheduling</span></div>
+        <div class="links"><a href="https://github.com/YOUR_USERNAME/wakeup-system" target="_blank" rel="noopener">repo ↗</a></div>
+      </article>
+
+      <article class="card reveal" data-k="ai pi">
+        <div class="top"><span class="kind">// on-device ai</span><span class="status wip">● building</span></div>
+        <h3>Local LLM on a Raspberry Pi</h3>
+        <p>A lightweight Gemma model running fully offline on a Pi, exposed as a chat API to my own Android app. Next stage: a microphone with hotword detection for hands-free conversation.</p>
+        <div class="chips"><span>Gemma</span><span>Pi</span><span>Android</span><span>Compose</span><span>REST</span></div>
+        <div class="links"><a href="https://github.com/YOUR_USERNAME/pi-llm" target="_blank" rel="noopener">repo ↗</a></div>
+      </article>
+
+      <article class="card reveal" data-k="embedded ai">
+        <div class="top"><span class="kind">// neurotech</span><span class="status wip">● building</span></div>
+        <h3>Mind-Controlled Presentation Clicker</h3>
+        <p>An EEG-based (not blink) slide clicker built on Upside Down Labs BioAmp EXG Pills and an ESP32. Signal acquisition, filtering, and a classifier that turns brain activity into "next slide".</p>
+        <div class="chips"><span>EEG</span><span>BioAmp EXG</span><span>ESP32</span><span>DSP</span><span>HID</span></div>
+        <div class="links"><a href="https://github.com/YOUR_USERNAME/bci-clicker" target="_blank" rel="noopener">repo ↗</a></div>
+      </article>
+
+      <article class="card reveal" data-k="audio pi">
+        <div class="top"><span class="kind">// audio</span><span class="status live">● poc</span></div>
+        <h3>Pi Zero Smart Music Player</h3>
+        <p>A Pi Zero 2 W with a PCM5102A I²S DAC acting as a Spotify Connect target and Bluetooth A2DP sink — turns any amp into a networked speaker.</p>
+        <div class="chips"><span>Pi Zero 2W</span><span>I²S DAC</span><span>Spotify Connect</span><span>A2DP</span></div>
+        <div class="links"><a href="https://github.com/YOUR_USERNAME/pi-music-player" target="_blank" rel="noopener">repo ↗</a></div>
+      </article>
+
+      <article class="card reveal" data-k="audio">
+        <div class="top"><span class="kind">// audio</span><span class="status wip">● building</span></div>
+        <h3>DIY 5.1 Surround Chain</h3>
+        <p>A hardware-decoded 5.1 setup built from a decoder board and an HDMI audio extractor. Debugged it down to the protocol level — TOSLINK can't carry 6-channel LPCM — and now reworking the chain for direct 6ch output.</p>
+        <div class="chips"><span>S/PDIF</span><span>HDMI ARC</span><span>DD / DTS</span><span>debugging</span></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">03</span><h2>Toolbox</h2></div>
+    <div class="skills reveal">
+      <div class="skill"><h4>Android</h4><ul>
+        <li>Kotlin, Coroutines, Flow</li><li>Jetpack Compose &amp; animations</li><li>Room / local persistence</li><li>Retrofit, REST APIs</li><li>Android BLE stack</li></ul></div>
+      <div class="skill"><h4>Embedded</h4><ul>
+        <li>ESP32 — Arduino &amp; ESP-IDF</li><li>FreeRTOS tasks &amp; queues</li><li>I²C / SPI / I²S</li><li>Deep sleep &amp; power budgets</li><li>C</li></ul></div>
+      <div class="skill"><h4>Systems &amp; IoT</h4><ul>
+        <li>Raspberry Pi (Zero → 5)</li><li>MQTT, home server</li><li>Linux, Python</li><li>WLED, audio pipelines</li><li>Biosignals (EEG/EXG)</li></ul></div>
+      <div class="skill"><h4>AI</h4><ul>
+        <li>LLM chat with tool loops</li><li>MCP (client/server)</li><li>On-device / local models</li><li>AI-assisted development</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="now">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">04</span><h2>/now</h2></div>
+    <div class="now reveal">
+      <div><b>learning</b>Android BLE in depth, ESP-IDF beyond the Arduino layer</div>
+      <div><b>building</b>EEG clicker · local LLM on the Pi</div>
+      <div><b>next</b>Bike tamper system firmware + companion app</div>
+      <div><b>curious</b>micro-ROS on ESP32, software-defined radio</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <h2>Building a connected device?</h2>
+    <p>I'd love to work on the app that talks to it.</p>
+    <div class="cta">
+      <a class="btn primary" href="mailto:YOUR_EMAIL@example.com">Say hello</a>
+      <a class="btn" href="https://www.linkedin.com/in/YOUR_HANDLE" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="https://github.com/YOUR_USERNAME" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>© <span id="y"></span> Mk · Chennai, India · hosted on GitHub Pages</footer>
+
 <script>
-//const
-    const PLAYER1 = 1;
-    const PLAYER2 = 2;
-    const CELL_EMPTY = 4;
-    const CELL_FILLED = 5;
-    const CELL_SIZE = "40px";
-    const WIN = 7;
-    const NOT_WIN = 8;
-    const DRAW = 9;
-    //model
-    let turn;
-    var to_score = 3;
-    let max_row,max_col;
-    let matrix;
-    function init_matrix()
-    {
-        matrix=[];
-        for (let i = 0; i < max_row; i++) {
-            let row =[];
-            for (let j = 0; j < max_col; j++) {
-                row.push(0);
-            }
-            matrix.push(row);
-        }
-    }
-    function set_box_size(max_r,max_c)
-    {
-        max_row = max_r;
-        max_col=max_c;
-    }
-    function update_move(row,col)
-    {
-        matrix[row][col] = turn;
-    }
-    function check_win(row,col)
-    {
-        let score = 0;
-        //check current row
-        for (let j = 0; j < max_col; j++) {
-            if(turn == matrix[row][j])
-            {
-                score++;
-                if(score == to_score)
-                    return WIN;
-            }
-            else
-            {
-                score = 0;
-            }
-        }
-        //check col
-        score = 0; 
-        for (let i = 0; i < max_row; i++) {
-            if(turn == matrix[i][col])
-            {
-                if(++score == to_score)
-                    return WIN;
-            }
-            else
-            {
-                score = 0;
-            }
-        }
-        //check diags
-        //getting starting position of diagonal
-        score=0;
-        let i = row;
-        let j = col;
-        while(i!=0&&j!=0)
-        {
-            i--;
-            j--;
-        }
-        while(i<max_row && j<max_col)
-        {
-            if(matrix[i][j]==turn)
-            {
-                if(++score == to_score)
-                {
-                    return WIN;
-                }
-            }
-            i++;
-            j++;
-        }
-        i = row;
-        j = col;
-        score--;
-        while(i!=0&&j!=max_col-1)
-        {
-            i--;
-            j++;
-        }
-        while(i<max_row && j>=0)
-        {
-            if(matrix[i][j]==turn)
-            {
-                if(++score == to_score)
-                {
-                    return WIN;
-                }
-            }
-            i++;
-            j--;
-        }
+  document.getElementById('y').textContent = new Date().getFullYear();
 
-        //check for draw
-        let flg = true;
-        for (let i = 0; i < max_row; i++) {
-            if(matrix[i].includes(0))
-                flg = false;
-        }
-        if(flg)
-            return DRAW;
-        else
-            return NOT_WIN;
-    }
-    //view
-    function set_turn(t)
-    {
-        if (t==PLAYER1)
-        {
-            turn = PLAYER1;
-            document.getElementById("player1-indicator").style.opacity=1;
-            document.getElementById("player2-indicator").style.opacity=0;
-        }
-        if (t==PLAYER2)
-        {
-            turn = PLAYER2;
-            document.getElementById("player2-indicator").style.opacity=1;
-            document.getElementById("player1-indicator").style.opacity=0;
-        }
-    }
-    function render()
-    {
-        let game_box=document.getElementById("game-box");
-        //adjust game box for new size
-        let value="";
-        for(let i=0;i<max_col;i++)
-        {
-            value += CELL_SIZE;
-            if (i!=max_col-1) {
-                value+=" ";
-            }
-        }
-        game_box.style.gridTemplateColumns = value;
-        //render size
-        document.getElementById("max-row").value = max_row;
-        document.getElementById("max-col").value = max_col;
-        document.getElementById("max-score").value = to_score;
-        for(let i=0;i<max_row;i++)
-        {
-            for(let j=0;j<max_col;j++)
-            {
-                let cell = document.createElement("button");
-                cell.className = "cell";
-                cell.dataset.row = i;
-                cell.dataset.col = j;
-                cell.dataset.filled = ""+CELL_EMPTY;
-                cell.onclick = onPlayerMove;
-                game_box.appendChild(cell);
-            }
-        }
-    }
-    function render_win()
-    {
-        if(turn == PLAYER1)
-        alert("Player 1 won !");
-        else
-        alert("Player 2 won !");
-    }
-    function render_draw()
-    {
-        alert("Match Draw ;)");
-    }
+  // filter
+  document.querySelectorAll('.filters button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      const f=b.dataset.f;
+      document.querySelectorAll('.card').forEach(c=>{
+        c.style.display = (f==='all' || c.dataset.k.split(' ').includes(f)) ? '' : 'none';
+      });
+    });
+  });
 
-    function clear_renders()
-    {
-        document.getElementById("game-box").innerHTML="";
-    }
-    //controller
-    function reset_game()
-    {
-        set_turn(PLAYER1);
-        init_matrix();
-        clear_renders();
-        render();
-
-    }
-    function onclick_size_change()
-    {
-        let max_row = document.getElementById("max-row").value;
-        let max_col = document.getElementById("max-col").value;
-        if(max_row == max_col && max_col>2 && max_col<10)
-        {
-            set_box_size(max_row,max_col);
-        }
-
-        to_score = document.getElementById("max-score").value;
-        reset_game();
-    }
-    function onPlayerMove(event)
-    {
-        console.log(event);
-        let cell = event.target;
-        let row  = cell.dataset.row;
-        let col  = cell.dataset.col;
-        if(parseInt(cell.dataset.filled) == CELL_EMPTY)
-        {
-            //decide who moved and put the x or o mark to cell
-            if(turn==PLAYER1)
-            {
-
-                cell.innerText = "X";
-                cell.style="background-color:rgba(255, 0, 0, 0.4);box-shadow : 0px 0px 10px red;";
-                cell.dataset.filled = CELL_FILLED;
-                update_move(row,col);
-                let stat = check_win(row,col);
-                //check win
-                if(stat==WIN)
-                {
-                    //console.log(matrix);
-                    render_win();
-                    reset_game();
-                }
-                else if(stat == DRAW)
-                {
-                    //console.log(matrix);
-                    render_draw();
-                    reset_game();
-                }
-                //next player + render turn
-                else
-                    set_turn(PLAYER2);
-            }
-            else
-            {
-                cell.innerText="O";
-                cell.style="background-color:rgba(0, 0, 255, 0.4);box-shadow : 0px 0px 10px blue;";
-                cell.dataset.filled = CELL_FILLED;
-                update_move(row,col);
-                let stat = check_win(row,col);
-                //check win
-                if(stat==WIN)
-                {
-                    //console.log(matrix);
-                    render_win();
-                    reset_game();
-                }
-                else if(stat == DRAW)
-                {
-                    //console.log(matrix);
-                    render_draw();
-                    reset_game();
-                }
-                //next player + render turn
-                else
-                    set_turn(PLAYER1);
-            }
-        }
-    }
-    //startup code
-    turn = PLAYER1; 
-    set_box_size(3,3);
-    set_turn(turn);
-    init_matrix();
-    render();
-
+  // reveal on scroll
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
+</body>
 </html>
